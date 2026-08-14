@@ -1,0 +1,101 @@
+{
+  "info": {
+    "_postman_id": "e453f876-bb8a-4445-b079-d3e027f99266",
+    "name": "Remont24 Leads Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "48300606",
+    "_collection_link": "https://go.postman.co/collection/48300606-e453f876-bb8a-4445-b079-d3e027f99266?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Site",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"event_id\": \"site_evt_101\",\r\n  \"source\": \"website\",\r\n  \"name\": \"Алексей Смирнов\",\r\n  \"phone\": \"+7 (999) 111-22-33\",\r\n  \"message\": \"Срочно! Холодильник Liebherr не морозит, компрессор горячий.\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://pisarev-n8n.ru/webhook/Site",
+          "protocol": "https",
+          "host": [
+            "pisarev-n8n",
+            "ru"
+          ],
+          "path": [
+            "webhook",
+            "Site"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Avito",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"event_id\": \"avito_evt_201\",\r\n  \"source\": \"avito\",\r\n  \"name\": \"Ирина\",\r\n  \"phone\": \"89215554433\",\r\n  \"message\": \"Здравствуйте! Перестала греть духовка Electrolux, таймер мигает.\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://pisarev-n8n.ru/webhook/Avito",
+          "protocol": "https",
+          "host": [
+            "pisarev-n8n",
+            "ru"
+          ],
+          "path": [
+            "webhook",
+            "Avito"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Duplicate Test",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"event_id\": \"site_evt_101\",\r\n  \"source\": \"website\",\r\n  \"name\": \"Алексей Смирнов\",\r\n  \"phone\": \"+7 (999) 111-22-33\",\r\n  \"message\": \"Повторный запрос: холодильник всё ещё не работает!\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://pisarev-n8n.ru/webhook/Site",
+          "protocol": "https",
+          "host": [
+            "pisarev-n8n",
+            "ru"
+          ],
+          "path": [
+            "webhook",
+            "Site"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
