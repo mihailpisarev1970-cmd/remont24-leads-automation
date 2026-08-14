@@ -1,0 +1,677 @@
+{
+  "name": "01_Main_Ingestion",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "Avito",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -592,
+        -320
+      ],
+      "id": "6d4161d6-b194-4437-b6e6-4229fc181c3f",
+      "name": "Webhook_Avito",
+      "webhookId": "f92aea5d-1978-4280-98db-e7f8625c61e3"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "Site",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -592,
+        -160
+      ],
+      "id": "188e29cc-5f5e-4693-a0fe-f2069aaa30f9",
+      "name": "Webhook_Site",
+      "webhookId": "f92aea5d-1978-4280-98db-e7f8625c61e3"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "Telegram",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -592,
+        0
+      ],
+      "id": "3dec1694-9426-457c-911a-0bc66b591c7b",
+      "name": "Webhook_Telegram",
+      "webhookId": "f92aea5d-1978-4280-98db-e7f8625c61e3"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Функция нормализации телефона до международного формата E.164 (+7XXXXXXXXXX)\nfunction normalizePhone(phone) {\n  if (!phone) return null;\n  let digits = String(phone).replace(/\\D/g, ''); // Оставляем только цифры\n  \n  if (digits.length === 11 && digits.startsWith('8')) {\n    digits = '7' + digits.slice(1);\n  } else if (digits.length === 10) {\n    digits = '7' + digits;\n  }\n  \n  return digits.length === 11 ? '+' + digits : null;\n}\n\nconst input = $input.item.json;\nconst body = input.body || input;\n\n// Извлекаем все необходимые поля по спецификации ТЗ\nconst event_id = body.event_id || null;\nconst source = body.source || 'website';\nconst external_user_id = body.external_user_id || null;\nconst received_at = body.received_at || new Date().toISOString();\nconst name = body.name || 'Клиент';\nconst raw_phone = body.phone || null;\nconst phone_normalized = normalizePhone(raw_phone);\nconst telegram_id = body.telegram_id || null;\nconst message = body.message || '';\n\nreturn {\n  json: {\n    event_id,\n    source,\n    external_user_id,\n    received_at,\n    name,\n    phone: raw_phone,\n    phone_normalized,\n    telegram_id,\n    message\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        -176
+      ],
+      "id": "5bb331ca-46f4-4e74-ad41-a954cb48ed9d",
+      "name": "Normalize Data"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appb6dn1gzkcIRZnP",
+          "mode": "list",
+          "cachedResultName": "Ремонт24_CRM",
+          "cachedResultUrl": "https://airtable.com/appb6dn1gzkcIRZnP"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblcJy9hN4U26Reob",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://airtable.com/appb6dn1gzkcIRZnP/tblcJy9hN4U26Reob"
+        },
+        "filterByFormula": "={event_id} = '{{ $json.event_id }}'",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        -144,
+        -176
+      ],
+      "id": "9ef94404-1f7b-4d05-b07a-eff251dc9976",
+      "name": "Search records",
+      "alwaysOutputData": true,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "3IdppSj7g8KUkUNf",
+          "name": "Ремонт24_CRM"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "704c9794-b1cc-454d-b431-0b1b2311a933",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        32,
+        -176
+      ],
+      "id": "d4f2cfc4-0116-4e5f-b52a-8d85041340a9",
+      "name": "vent Exists"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appb6dn1gzkcIRZnP",
+          "mode": "list",
+          "cachedResultName": "Ремонт24_CRM",
+          "cachedResultUrl": "https://airtable.com/appb6dn1gzkcIRZnP"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblcJy9hN4U26Reob",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://airtable.com/appb6dn1gzkcIRZnP/tblcJy9hN4U26Reob"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "status": "=duplicate",
+            "Notes": "Повторный запрос event_id (дубликат события)"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "phone_normalized",
+              "displayName": "phone_normalized",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "telegram_id",
+              "displayName": "telegram_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "sources",
+              "displayName": "sources",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "raw_messages",
+              "displayName": "raw_messages",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "service",
+              "displayName": "service",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "urgency",
+              "displayName": "urgency",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "responsible",
+              "displayName": "responsible",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        240,
+        -272
+      ],
+      "id": "682b069b-efbd-41f9-ae5f-9663343f861c",
+      "name": "Mark Duplicate Event",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "3IdppSj7g8KUkUNf",
+          "name": "Ремонт24_CRM"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://polza.ai/api/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"gpt-4o-mini\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"Ты — AI-ассистент сервисного центра 'Ремонт24'. Твоя задача — проанализировать входящую заявку клиента и вернуть строго валидный JSON без разметки markdown.\\n\\nПоля для ответа:\\n- service: 'refrigerators' | 'washers' | 'ovens' | 'dishwashers' | 'microwaves' | 'unknown'\\n- urgency: 'urgent' | 'high' | 'medium' | 'low' | 'unknown'\\n- status: 'new' | 'needs_clarification' | 'duplicate' | 'in_progress' | 'closed'\\n- summary: Краткая суть поломки (до 10 слов)\\n- responsible: 'boris' | 'anna' | 'denis'\\n\\nПравила назначения ответственных:\\n- refrigerators -> boris\\n- washers, dishwashers, microwaves, unknown -> anna\\n- ovens -> denis\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Имя: {{ $('Normalize Data').item.json.name }}\\nТелефон: {{ $('Normalize Data').item.json.phone_normalized }}\\nСообщение: {{ $('Normalize Data').item.json.message }}\"\n    }\n  ],\n  \"temperature\": 0.1,\n  \"response_format\": {\n    \"type\": \"json_object\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        240,
+        -80
+      ],
+      "id": "45d37446-a8fc-497b-92ba-835feccf8e8e",
+      "name": "Polza AI: Qualify Lead",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "pXOr8LwQcEMqi78c",
+          "name": "Polza_Task"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Получаем ответ от Polza AI\nconst aiContent = $json.choices[0].message.content;\n\n// Парсим JSON из ответа нейросети\nlet parsed = {};\ntry {\n  parsed = typeof aiContent === 'string' ? JSON.parse(aiContent) : aiContent;\n} catch (e) {\n  parsed = {\n    service: 'unknown',\n    urgency: 'unknown',\n    status: 'needs_clarification',\n    responsible: 'anna',\n    summary: 'Ошибка парсинга ответа AI'\n  };\n}\n\n// Берем исходные данные лида из ноды Normalize Data\nconst normalizedData = $('Normalize Data').item.json;\n\nreturn {\n  json: {\n    event_id: normalizedData.event_id,\n    name: normalizedData.name,\n    phone: normalizedData.phone,\n    phone_normalized: normalizedData.phone_normalized,\n    telegram_id: normalizedData.telegram_id,\n    sources: normalizedData.source,\n    raw_messages: normalizedData.message,\n    service: parsed.service || 'unknown',\n    urgency: parsed.urgency || 'unknown',\n    status: parsed.status || 'new',\n    responsible: parsed.responsible || 'anna',\n    Notes: parsed.summary || ''\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        432,
+        -80
+      ],
+      "id": "2656531e-4e8a-4266-a34a-d6753bbfd59f",
+      "name": "Parse AI Result"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appb6dn1gzkcIRZnP",
+          "mode": "list",
+          "cachedResultName": "Ремонт24_CRM",
+          "cachedResultUrl": "https://airtable.com/appb6dn1gzkcIRZnP"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblcJy9hN4U26Reob",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://airtable.com/appb6dn1gzkcIRZnP/tblcJy9hN4U26Reob"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "event_id": "={{ $json.event_id }}",
+            "name": "={{ $json.name }}",
+            "phone": "={{ $json.phone }}",
+            "phone_normalized": "={{ $json.phone_normalized }}",
+            "telegram_id": "={{ $json.telegram_id }}",
+            "sources": "={{ $json.sources }}",
+            "raw_messages": "={{ $json.raw_messages }}",
+            "service": "={{ $json.service }}",
+            "urgency": "={{ $json.urgency }}",
+            "status": "={{ $json.status }}",
+            "responsible": "={{ $json.responsible }}",
+            "Notes": "={{ $json.Notes }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "phone_normalized",
+              "displayName": "phone_normalized",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "telegram_id",
+              "displayName": "telegram_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "sources",
+              "displayName": "sources",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "raw_messages",
+              "displayName": "raw_messages",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "service",
+              "displayName": "service",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "urgency",
+              "displayName": "urgency",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "responsible",
+              "displayName": "responsible",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        608,
+        -80
+      ],
+      "id": "aada4c9e-7e3d-40ce-a68b-30fa2af64014",
+      "name": "Create Lead Record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "3IdppSj7g8KUkUNf",
+          "name": "Ремонт24_CRM"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook_Telegram": {
+      "main": [
+        [
+          {
+            "node": "Normalize Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook_Avito": {
+      "main": [
+        [
+          {
+            "node": "Normalize Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook_Site": {
+      "main": [
+        [
+          {
+            "node": "Normalize Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Data": {
+      "main": [
+        [
+          {
+            "node": "Search records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search records": {
+      "main": [
+        [
+          {
+            "node": "vent Exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "vent Exists": {
+      "main": [
+        [
+          {
+            "node": "Mark Duplicate Event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Polza AI: Qualify Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Polza AI: Qualify Lead": {
+      "main": [
+        [
+          {
+            "node": "Parse AI Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse AI Result": {
+      "main": [
+        [
+          {
+            "node": "Create Lead Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "096994c0-075e-4ac1-9fc0-1b9ebbb0c658",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "116e0517c0c46743977500fa36afad84165a2c7a194c3b3a3f9691bb4c46f4bf"
+  },
+  "nodeGroups": [],
+  "id": "fhtPMEAONDLxqcYa",
+  "tags": []
+}
