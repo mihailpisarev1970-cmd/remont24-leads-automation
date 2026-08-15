@@ -27,7 +27,19 @@
                                                                                      [ Create Lead Record ] (Status: new)
 
 ```
+### ⏱ Краткая схема потока данных (SLA-эскалация)
 
+```text
+[ Schedule Trigger (Interval: 1 min) ]
+                  │
+                  ▼
+[ Search Airtable (status='new' AND urgency='urgent') ][cite: 1]
+                  │
+                  ▼
+[ Telegram (Alert to Supervisor) ]                      (Текст алерта с данными лида)[cite: 1]
+                  │
+                  ▼
+[ Update Airtable Record ]                              (Status: escalated)[cite: 1]
 ---
 
 ## 🚀 Инструкция запуска с нуля
