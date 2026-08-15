@@ -26,6 +26,8 @@
                                                                                             │
                                                                                      [ Create Lead Record ] (Status: new)
 
+## SLA Эскалация 
+
 [ Schedule Trigger ] ──► [ Search Airtable (status='new' & urgency='urgent') ]
                                 │
                                 ▼
