@@ -15,6 +15,8 @@
 ## 📐 Краткая схема потока данных
 
 ```text
+Основная схема Remont24
+
 [ Telegram (@rem_test24_bot) ] ──┐
 [ Webhook Site (JSON) ] ─────────┼──► [ Normalize Data (E.164) ] ──► [ Search Airtable (event_id) ]
 [ Webhook Avito (JSON) ] ────────┘                                              │
@@ -26,7 +28,7 @@
                                                                                             │
                                                                                      [ Create Lead Record ] (Status: new)
 
-## SLA Эскалация 
+ SLA Эскалация 
 
 [ Schedule Trigger ] ──► [ Search Airtable (status='new' & urgency='urgent') ]
                                 │
