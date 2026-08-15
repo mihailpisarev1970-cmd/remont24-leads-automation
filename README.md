@@ -42,9 +42,6 @@
 [ Update Airtable Record ]                              (Status: escalated)[cite: 1]
 ---
 
-```bash
-   cp .env.example .env
-   ```
 
 ### 2. Импорт сценария в n8n
 1. Откройте веб-интерфейс n8n.
