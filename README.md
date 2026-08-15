@@ -8,7 +8,7 @@
 
 * 🤖 Telegram-бот (Живой канал): [@rem_test24_bot](https://t.me/rem_test24_bot)
 * 📊 Airtable CRM (Таблица Leads): [База данных Ремонт24_CRM](https://airtable.com/appb6dn1gzkcIRZnP/shrA3fhDfBlfyiugq)
-* 🎥 Видео-скринкаст (7–10 мин без монтажа): [Вставьте ссылку на видео: Яндекс.Диск / Google Диск / YouTube]
+* 🎥 Видео-скринкаст (без монтажа): (https://rutube.ru/video/private/c852b2c2caeca4a5fe2034cc0de07fa1/?p=n7jBNDeHQ81bnvQWaY7nCw)
 
 ---
 
