@@ -1,0 +1,323 @@
+{
+  "name": "SLA_эсколация",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -480,
+        -80
+      ],
+      "id": "657e6412-fe73-46a4-8794-f63f6beeac18",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appb6dn1gzkcIRZnP",
+          "mode": "list",
+          "cachedResultName": "Ремонт24_CRM",
+          "cachedResultUrl": "https://airtable.com/appb6dn1gzkcIRZnP"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblcJy9hN4U26Reob",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://airtable.com/appb6dn1gzkcIRZnP/tblcJy9hN4U26Reob"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Проверяем базу').item.json.id }}",
+            "status": "escalated",
+            "Notes": "SLA 15 минут нарушено. Уведомление отправлено руководителю."
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "phone_normalized",
+              "displayName": "phone_normalized",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "telegram_id",
+              "displayName": "telegram_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "sources",
+              "displayName": "sources",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "raw_messages",
+              "displayName": "raw_messages",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "service",
+              "displayName": "service",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "urgency",
+              "displayName": "urgency",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "responsible",
+              "displayName": "responsible",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        128,
+        -80
+      ],
+      "id": "e8072bd0-713f-432b-a692-6849aeac4164",
+      "name": "Обновление записей",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "3IdppSj7g8KUkUNf",
+          "name": "Ремонт24_CRM"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "238583074",
+        "text": "=🚨 НАPУШЕНИЕ SLA! Срочная заявка висит без ответа более 15 минут!\n👤 Клиент: {{ $json.fields.name || 'Не указан' }}\n📞 Телефон: {{ $json.fields.phone_normalized || $json.fields.phone || 'Не указан' }}\n🔧 Услуга: {{ $json.fields.service || 'Не указана' }}\n👨‍🔧 Мастер: {{ $json.fields.responsible || 'Не назначен' }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -64,
+        -80
+      ],
+      "id": "7665bc00-7beb-41e8-9c51-5495fc3b7d99",
+      "name": "Сообщение руководителю",
+      "webhookId": "105c56b3-f53a-44f6-9d93-f8d3349d4f1b",
+      "credentials": {
+        "telegramApi": {
+          "id": "ACz54lVhGUgPHotT",
+          "name": "rem_test24"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appb6dn1gzkcIRZnP",
+          "mode": "list",
+          "cachedResultName": "Ремонт24_CRM",
+          "cachedResultUrl": "https://airtable.com/appb6dn1gzkcIRZnP"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblcJy9hN4U26Reob",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://airtable.com/appb6dn1gzkcIRZnP/tblcJy9hN4U26Reob"
+        },
+        "filterByFormula": "=AND({status} = 'new', {urgency} = 'urgent')",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        -272,
+        -80
+      ],
+      "id": "3187afa1-b7b4-43ab-bbce-36ed027668d8",
+      "name": "Проверяем базу",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "3IdppSj7g8KUkUNf",
+          "name": "Ремонт24_CRM"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Проверяем базу",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Сообщение руководителю": {
+      "main": [
+        [
+          {
+            "node": "Обновление записей",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Проверяем базу": {
+      "main": [
+        [
+          {
+            "node": "Сообщение руководителю",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "819c87bc-9fe9-4a93-a2f8-45f7a678f3a6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "116e0517c0c46743977500fa36afad84165a2c7a194c3b3a3f9691bb4c46f4bf"
+  },
+  "nodeGroups": [],
+  "id": "aIhwntA6K2Noobqg",
+  "tags": []
+}
