@@ -25,8 +25,24 @@
                                                                                      [ Parse AI Result ]
                                                                                             │
                                                                                      [ Create Lead Record ] (Status: new)
-```
 
+```
+### ⏱ Краткая схема фонового SLA-мониторинга
+
+[ Schedule Trigger (Крон) ] ──> [ Поиск просроченных заявок (Airtable) ] ──> [ Уведомление в чат (Telegram) ] ──> [ Обновление статуса на escalated (Airtable) ]
+```[cite: 1]
+
+---
+
+А если нужен развернутый вариант с ветвлением (как на скриншоте выше):
+
+```text
+[ Schedule Trigger (Интервал) ] ──> [ Search Airtable (status='new' AND urgency='urgent') ]
+                                                 │
+                                           (Найдена заявка?)
+                                           ├── ДА  ──> [ Telegram Alert ] ──> [ Update Airtable (status='escalated') ]
+                                           └── НЕТ ──> [ Завершение без действий ]
+```[cite: 1]
 ---
 
 ## 🚀 Инструкция запуска с нуля
