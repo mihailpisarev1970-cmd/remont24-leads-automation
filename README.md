@@ -27,8 +27,15 @@
                                                                                      [ Create Lead Record ] (Status: new)
 
 ```
+[ Schedule Trigger ] ──► [ Search Airtable (status='new' & urgency='urgent') ]
+                                │
+                                ▼
+                       [ Telegram Alert ] (Уведомление руководителю)
+                                │
+                                ▼
+                       [ Update Airtable Record ] (Status: escalated)
 
-
+  ```
 
 ### 2. Импорт сценария в n8n
 1. Откройте веб-интерфейс n8n.
